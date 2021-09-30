@@ -27,8 +27,14 @@ export default function Controls({ showControls, onChange }) {
     bg4: StringParam,
     globalBg: StringParam,
     showGrid: BooleanParam,
+    flipX: BooleanParam,
+    flipY: BooleanParam,
     gridThickness: NumberParam,
     gridColour: StringParam,
+    cropTop: NumberParam,
+    cropLeft: NumberParam,
+    cropRight: NumberParam,
+    cropBottom: NumberParam,
   });
 
   const [values, set] = useControls(() => ({
@@ -60,6 +66,54 @@ export default function Controls({ showControls, onChange }) {
         },
       },
       { collapsed: true }
+    ),
+
+    flipping: folder(
+      {
+        flipX: {
+          value: false,
+          onChange: (value) => setQuery({ flipX: value }),
+        },
+        flipY: {
+          value: false,
+          onChange: (value) => setQuery({ flipY: value }),
+        },
+      },
+      {
+        collapsed: true,
+      }
+    ),
+
+    cropping: folder(
+      {
+        cropLeft: {
+          value: 0,
+          min: 0,
+          max: 1,
+          onChange: (value) => setQuery({ cropLeft: value }),
+        },
+        cropTop: {
+          value: 0,
+          min: 0,
+          max: 1,
+          onChange: (value) => setQuery({ cropTop: value }),
+        },
+        cropRight: {
+          value: 1,
+          min: 0,
+          max: 1,
+          onChange: (value) => setQuery({ cropRight: value }),
+        },
+        cropBottom: {
+          value: 1,
+          min: 0,
+          max: 1,
+          onChange: (value) => setQuery({ cropBottom: value }),
+        },
+      },
+      {
+        collapsed: true,
+      }
     ),
 
     Brightness_Size_Options: folder(

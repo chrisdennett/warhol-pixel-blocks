@@ -21,11 +21,11 @@ export default function App() {
     });
   });
 
-  const toggleControls = (e) => {
-    // if (e.target.id === "app" || e.target.id === "canvas") {
-    //   setShowControls((prev) => !prev);
-    // }
-  };
+  // const toggleControls = (e) => {
+  //   if (e.target.id === "app" || e.target.id === "canvas") {
+  //     setShowControls((prev) => !prev);
+  //   }
+  // };
 
   const onParamsChange = (newParams) => {
     setParams(newParams);
@@ -34,7 +34,7 @@ export default function App() {
   return (
     <div
       className="app"
-      onClick={toggleControls}
+      // onClick={toggleControls}
       id="app"
       style={{ background: params.globalBg }}
     >

@@ -1,6 +1,6 @@
 .blockMirror,
 .blockMirror canvas {
-  pointer-events: none;
+  /* pointer-events: none; */
   max-width: 100vw;
   max-height: 100vh;
 }

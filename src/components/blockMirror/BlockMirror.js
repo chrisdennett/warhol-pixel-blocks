@@ -20,6 +20,8 @@ export default function BlockMirror({
   bg2,
   bg3,
   bg4,
+  flipX,
+  flipY,
   canvasShape,
   imageTransparency,
   effectType,
@@ -77,9 +79,12 @@ export default function BlockMirror({
 
     if (!blockCanvas1) return null;
 
+    const blockCanvasW = blockCanvas1.width;
+    const blockCanvasH = blockCanvas1.height;
+
     const canvas = canvasRef.current;
-    canvas.width = blockCanvas1.width * 2;
-    canvas.height = blockCanvas1.height * 2;
+    canvas.width = blockCanvasW * 2;
+    canvas.height = blockCanvasH * 2;
     const ctx = canvas.getContext("2d");
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -95,11 +100,11 @@ export default function BlockMirror({
       ctx.save();
       ctx.globalAlpha = imageTransparency;
       ctx.drawImage(
-        squareCanvas,
+        inputCanvas,
         0,
         0,
-        squareCanvas.width,
-        squareCanvas.height,
+        inputCanvas.width,
+        inputCanvas.height,
         0,
         0,
         canvas.width,
@@ -108,10 +113,41 @@ export default function BlockMirror({
       ctx.restore();
     }
 
+    // top left
     ctx.drawImage(blockCanvas1, 0, 0);
-    ctx.drawImage(blockCanvas2, blockCanvas1.width, 0);
-    ctx.drawImage(blockCanvas3, 0, blockCanvas1.height);
-    ctx.drawImage(blockCanvas4, blockCanvas1.width, blockCanvas1.height);
+
+    let scaleX = 1;
+    let rightTranslatedX = blockCanvasW;
+    let scaleY = 1;
+    let bottomTranslateY = blockCanvasH;
+
+    // top right
+    if (flipX) {
+      rightTranslatedX = -2 * blockCanvasW;
+      scaleX = -1;
+    }
+    if (flipY) {
+      bottomTranslateY = -2 * blockCanvasH;
+      scaleY = -1;
+    }
+
+    ctx.save();
+    // ctx.translate(rightTranslatedX, 0);
+    ctx.scale(scaleX, 1);
+    ctx.drawImage(blockCanvas2, rightTranslatedX, 0);
+    ctx.restore();
+
+    // bottom left
+    ctx.save();
+    ctx.scale(1, scaleY);
+    ctx.drawImage(blockCanvas3, 0, bottomTranslateY);
+    ctx.restore();
+
+    // bottom right
+    ctx.save();
+    ctx.scale(scaleX, scaleY);
+    ctx.drawImage(blockCanvas4, rightTranslatedX, bottomTranslateY);
+    ctx.restore();
   });
 
   return (
