@@ -4,6 +4,7 @@ import {
   getBlockData,
   getSquareCanvas,
 } from "../../logic/createBlockCanvas";
+import { createCroppedCanvas } from "../../logic/createCroppedCanvas";
 import styles from "./blockMirror.module.css";
 
 export default function BlockMirror({
@@ -25,6 +26,10 @@ export default function BlockMirror({
   canvasShape,
   imageTransparency,
   effectType,
+  cropLeft,
+  cropRight,
+  cropTop,
+  cropBottom,
   ...rest
 }) {
   const canvasRef = useRef(null);
@@ -33,7 +38,14 @@ export default function BlockMirror({
     if (!frame.canvas) return;
 
     const inputCanvas = frame.canvas; // getSquareCanvas(frame.canvas);
-    const imgRes = Math.round(inputCanvas.width / blocksAcross);
+    const croppedCanvas = createCroppedCanvas(inputCanvas, {
+      top: cropTop,
+      left: cropLeft,
+      bottom: cropBottom,
+      right: cropRight,
+    });
+
+    const imgRes = Math.round(croppedCanvas.width / blocksAcross);
 
     // make the block size the correct size to fit screen height
     const blockSize = Math.ceil(window.innerHeight / blocksAcross);
@@ -43,7 +55,7 @@ export default function BlockMirror({
     let blockCanvas4 = null;
 
     const palleteSize = 20;
-    const blockData = getBlockData(inputCanvas, imgRes, palleteSize);
+    const blockData = getBlockData(croppedCanvas, imgRes, palleteSize);
     blockCanvas1 = createBrightnessKeyCanvas({
       blockData,
       blockSize,
@@ -100,11 +112,11 @@ export default function BlockMirror({
       ctx.save();
       ctx.globalAlpha = imageTransparency;
       ctx.drawImage(
-        inputCanvas,
+        croppedCanvas,
         0,
         0,
-        inputCanvas.width,
-        inputCanvas.height,
+        croppedCanvas.width,
+        croppedCanvas.height,
         0,
         0,
         canvas.width,
