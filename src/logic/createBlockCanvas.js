@@ -110,6 +110,7 @@ export const createBrightnessKeyCanvas = ({
   showPixels,
   pixelColour,
   bgColour,
+  usePixelColourForBg,
   lineThickness,
   showGrid = true,
   gridType = "square",
@@ -129,7 +130,7 @@ export const createBrightnessKeyCanvas = ({
   const ctx = outputCanvas.getContext("2d");
 
   // fill in background
-  ctx.fillStyle = bgColour;
+  ctx.fillStyle = usePixelColourForBg ? pixelColour : bgColour;
   ctx.fillRect(0, 0, outWidth, outHeight);
 
   const { h, s } = hexToHsl(pixelColour);

@@ -17,6 +17,7 @@ export default function Controls({ showControls, onChange }) {
     showImage: BooleanParam,
     imageTransparency: NumberParam,
     showPixels: BooleanParam,
+    usePixelColourForBg: BooleanParam,
     pixelColour1: StringParam,
     pixelColour2: StringParam,
     pixelColour3: StringParam,
@@ -71,11 +72,11 @@ export default function Controls({ showControls, onChange }) {
     flipping: folder(
       {
         flipX: {
-          value: false,
+          value: true,
           onChange: (value) => setQuery({ flipX: value }),
         },
         flipY: {
-          value: false,
+          value: true,
           onChange: (value) => setQuery({ flipY: value }),
         },
       },
@@ -99,13 +100,13 @@ export default function Controls({ showControls, onChange }) {
           onChange: (value) => setQuery({ cropTop: value }),
         },
         cropRight: {
-          value: 1,
+          value: 0.91,
           min: 0,
           max: 1,
           onChange: (value) => setQuery({ cropRight: value }),
         },
         cropBottom: {
-          value: 1,
+          value: 0.91,
           min: 0,
           max: 1,
           onChange: (value) => setQuery({ cropBottom: value }),
@@ -150,48 +151,59 @@ export default function Controls({ showControls, onChange }) {
       { collapsed: true }
     ),
 
-    TopLeft: folder({
-      pixelColour1: {
-        value: "#ff6000",
-        onChange: (value) => setQuery({ pixelColour1: value }),
+    Colours: folder({
+      usePixelColourForBg: {
+        value: true,
+        onChange: (value) => setQuery({ usePixelColourForBg: value }),
       },
-      bg1: {
-        value: "#ff6000",
-        onChange: (value) => setQuery({ bg1: value }),
-      },
-    }),
 
-    TopRight: folder({
-      pixelColour2: {
-        value: "#b11e1e",
-        onChange: (value) => setQuery({ pixelColour2: value }),
-      },
-      bg2: {
-        value: "#b11e1e",
-        onChange: (value) => setQuery({ bg2: value }),
-      },
-    }),
+      TopLeft: folder({
+        pixelColour1: {
+          value: "#ff6000",
+          onChange: (value) => setQuery({ pixelColour1: value }),
+        },
+        bg1: {
+          value: "#ff6000",
+          onChange: (value) => setQuery({ bg1: value }),
+          render: (get) => get("Colours.usePixelColourForBg") === false,
+        },
+      }),
 
-    BottomLeft: folder({
-      pixelColour3: {
-        value: "#a80fce",
-        onChange: (value) => setQuery({ pixelColour3: value }),
-      },
-      bg3: {
-        value: "#a80fce",
-        onChange: (value) => setQuery({ bg3: value }),
-      },
-    }),
+      TopRight: folder({
+        pixelColour2: {
+          value: "#b11e1e",
+          onChange: (value) => setQuery({ pixelColour2: value }),
+        },
+        bg2: {
+          value: "#b11e1e",
+          onChange: (value) => setQuery({ bg2: value }),
+          render: (get) => get("Colours.usePixelColourForBg") === false,
+        },
+      }),
 
-    BottomRight: folder({
-      pixelColour4: {
-        value: "#0f6bb7",
-        onChange: (value) => setQuery({ pixelColour4: value }),
-      },
-      bg4: {
-        value: "#0f6bb7",
-        onChange: (value) => setQuery({ bg4: value }),
-      },
+      BottomLeft: folder({
+        pixelColour3: {
+          value: "#a80fce",
+          onChange: (value) => setQuery({ pixelColour3: value }),
+        },
+        bg3: {
+          value: "#a80fce",
+          onChange: (value) => setQuery({ bg3: value }),
+          render: (get) => get("Colours.usePixelColourForBg") === false,
+        },
+      }),
+
+      BottomRight: folder({
+        pixelColour4: {
+          value: "#0f6bb7",
+          onChange: (value) => setQuery({ pixelColour4: value }),
+        },
+        bg4: {
+          value: "#0f6bb7",
+          onChange: (value) => setQuery({ bg4: value }),
+          render: (get) => get("Colours.usePixelColourForBg") === false,
+        },
+      }),
     }),
 
     Layers: folder(
