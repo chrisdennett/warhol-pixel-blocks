@@ -21,7 +21,11 @@ export default function Controls({ showControls, onChange }) {
     pixelColour2: StringParam,
     pixelColour3: StringParam,
     pixelColour4: StringParam,
-    bgColour: StringParam,
+    bg1: StringParam,
+    bg2: StringParam,
+    bg3: StringParam,
+    bg4: StringParam,
+    globalBg: StringParam,
     showGrid: BooleanParam,
     gridThickness: NumberParam,
     gridColour: StringParam,
@@ -36,7 +40,7 @@ export default function Controls({ showControls, onChange }) {
           options: ["video", "webcam", "img"],
         },
         image: {
-          image: "./Dorothy-Wordsworth-face.png",
+          image: "./Dorothy-Wordsworth-transparent-bg.png",
           render: (get) => get("Input.inputType") === "img",
         },
         canvasShape: {
@@ -45,14 +49,14 @@ export default function Controls({ showControls, onChange }) {
           onChange: (option) => setQuery({ canvasShape: option }),
         },
         blocksAcross: {
-          value: 42,
+          value: 126,
           min: 10,
           max: 500,
           onChange: (value) => setQuery({ blocksAcross: value }),
         },
-        bgColour: {
+        globalBg: {
           value: "#ddccde",
-          onChange: (value) => setQuery({ bgColour: value }),
+          onChange: (value) => setQuery({ globalBg: value }),
         },
       },
       { collapsed: true }
@@ -92,27 +96,49 @@ export default function Controls({ showControls, onChange }) {
       { collapsed: true }
     ),
 
-    Colour: folder(
-      {
-        pixelColour1: {
-          value: "#6d5972",
-          onChange: (value) => setQuery({ pixelColour1: value }),
-        },
-        pixelColour2: {
-          value: "#b11e1e",
-          onChange: (value) => setQuery({ pixelColour2: value }),
-        },
-        pixelColour3: {
-          value: "#a80fce",
-          onChange: (value) => setQuery({ pixelColour3: value }),
-        },
-        pixelColour4: {
-          value: "#0f6bb7",
-          onChange: (value) => setQuery({ pixelColour4: value }),
-        },
+    TopLeft: folder({
+      pixelColour1: {
+        value: "#ff6000",
+        onChange: (value) => setQuery({ pixelColour1: value }),
       },
-      { collapsed: false }
-    ),
+      bg1: {
+        value: "#ff6000",
+        onChange: (value) => setQuery({ bg1: value }),
+      },
+    }),
+
+    TopRight: folder({
+      pixelColour2: {
+        value: "#b11e1e",
+        onChange: (value) => setQuery({ pixelColour2: value }),
+      },
+      bg2: {
+        value: "#b11e1e",
+        onChange: (value) => setQuery({ bg2: value }),
+      },
+    }),
+
+    BottomLeft: folder({
+      pixelColour3: {
+        value: "#a80fce",
+        onChange: (value) => setQuery({ pixelColour3: value }),
+      },
+      bg3: {
+        value: "#a80fce",
+        onChange: (value) => setQuery({ bg3: value }),
+      },
+    }),
+
+    BottomRight: folder({
+      pixelColour4: {
+        value: "#0f6bb7",
+        onChange: (value) => setQuery({ pixelColour4: value }),
+      },
+      bg4: {
+        value: "#0f6bb7",
+        onChange: (value) => setQuery({ bg4: value }),
+      },
+    }),
 
     Layers: folder(
       {

@@ -7,7 +7,7 @@ import VideoCanvas from "./components/videoCanvas/VideoCanvas";
 import Controls from "./components/controls/Controls";
 
 export default function App() {
-  const [showControls, setShowControls] = useState(true);
+  const [showControls] = useState(true);
   const [params, setParams] = useState({});
   const [frame, setFrame] = useState({ canvas: null, counter: 0 });
 
@@ -36,7 +36,7 @@ export default function App() {
       className="app"
       onClick={toggleControls}
       id="app"
-      style={{ background: params.bgColour }}
+      style={{ background: params.globalBg }}
     >
       <Controls showControls={showControls} onChange={onParamsChange} />
 

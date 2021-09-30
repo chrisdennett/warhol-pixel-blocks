@@ -12,6 +12,7 @@ const getIndividualBlockData = ({
   let totalRed = 0;
   let totalGreen = 0;
   let totalBlue = 0;
+  let totalAlpha = 0;
 
   // when at 38 blocks wide it seems to include more pixels for col
   // on far right
@@ -26,6 +27,7 @@ const getIndividualBlockData = ({
         totalRed += pixels[i];
         totalGreen += pixels[i + 1];
         totalBlue += pixels[i + 2];
+        totalAlpha += pixels[i + 3];
 
         totalPixels++;
       }
@@ -35,6 +37,7 @@ const getIndividualBlockData = ({
   const r = totalRed / totalPixels;
   const g = totalGreen / totalPixels;
   const b = totalBlue / totalPixels;
+  const a = totalAlpha / totalPixels;
 
   const brightness =
     totalRed * 0.2126 + totalGreen * 0.7152 + totalBlue * 0.0722;
@@ -45,7 +48,7 @@ const getIndividualBlockData = ({
     decimalPercentage
   );
 
-  return { brightness: decimalPercentage, r, g, b, palleteKeyIndex };
+  return { brightness: decimalPercentage, r, g, b, a, palleteKeyIndex };
 };
 
 function findClosestIndex(arr, num) {
@@ -106,6 +109,7 @@ export const createBrightnessKeyCanvas = ({
   blockSize = 10,
   showPixels,
   pixelColour,
+  bgColour,
   lineThickness,
   showGrid = true,
   gridType = "square",
@@ -124,7 +128,9 @@ export const createBrightnessKeyCanvas = ({
   outputCanvas.height = outHeight;
   const ctx = outputCanvas.getContext("2d");
 
-  // ctx.fillStyle = pixelColour1;
+  // fill in background
+  ctx.fillStyle = bgColour;
+  ctx.fillRect(0, 0, outWidth, outHeight);
 
   const { h, s } = hexToHsl(pixelColour);
 
@@ -137,7 +143,9 @@ export const createBrightnessKeyCanvas = ({
     for (let y = 0; y < rows; y++) {
       const row = blockData[y];
       const blockCorner = { x: x * blockSize, y: y * blockSize };
-      const { palleteKeyIndex, r, g, b } = row[x];
+      const { palleteKeyIndex, r, g, b, a } = row[x];
+
+      if (a < 1) continue;
 
       const brightnessAbove = y === 0 ? 0 : blockData[y - 1][x].brightness;
       const brightnessLeft = x === 0 ? 0 : row[x - 1].brightness;

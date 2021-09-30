@@ -16,6 +16,10 @@ export default function BlockMirror({
   pixelColour2,
   pixelColour3,
   pixelColour4,
+  bg1,
+  bg2,
+  bg3,
+  bg4,
   canvasShape,
   imageTransparency,
   effectType,
@@ -26,8 +30,8 @@ export default function BlockMirror({
   useEffect(() => {
     if (!frame.canvas) return;
 
-    const squareCanvas = getSquareCanvas(frame.canvas);
-    const imgRes = Math.round(squareCanvas.width / blocksAcross);
+    const inputCanvas = frame.canvas; // getSquareCanvas(frame.canvas);
+    const imgRes = Math.round(inputCanvas.width / blocksAcross);
 
     // make the block size the correct size to fit screen height
     const blockSize = Math.ceil(window.innerHeight / blocksAcross);
@@ -37,12 +41,13 @@ export default function BlockMirror({
     let blockCanvas4 = null;
 
     const palleteSize = 20;
-    const blockData = getBlockData(squareCanvas, imgRes, palleteSize);
+    const blockData = getBlockData(inputCanvas, imgRes, palleteSize);
     blockCanvas1 = createBrightnessKeyCanvas({
       blockData,
       blockSize,
       palleteSize,
       pixelColour: pixelColour1,
+      bgColour: bg1,
       ...rest,
     });
     blockCanvas2 = createBrightnessKeyCanvas({
@@ -50,6 +55,7 @@ export default function BlockMirror({
       blockSize,
       palleteSize,
       pixelColour: pixelColour2,
+      bgColour: bg2,
       ...rest,
     });
     blockCanvas3 = createBrightnessKeyCanvas({
@@ -57,6 +63,7 @@ export default function BlockMirror({
       blockSize,
       palleteSize,
       pixelColour: pixelColour3,
+      bgColour: bg3,
       ...rest,
     });
     blockCanvas4 = createBrightnessKeyCanvas({
@@ -64,6 +71,7 @@ export default function BlockMirror({
       blockSize,
       palleteSize,
       pixelColour: pixelColour4,
+      bgColour: bg4,
       ...rest,
     });
 
