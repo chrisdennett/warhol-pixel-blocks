@@ -1,9 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import {
   createBrightnessKeyCanvas,
-  createBrightnessSizeBlockCanvas,
   getBlockData,
-  getKeyBlockData,
   getSquareCanvas,
 } from "../../logic/createBlockCanvas";
 import styles from "./blockMirror.module.css";
@@ -14,6 +12,10 @@ export default function BlockMirror({
   showImage,
   showShadow,
   blocksAcross,
+  pixelColour1,
+  pixelColour2,
+  pixelColour3,
+  pixelColour4,
   canvasShape,
   imageTransparency,
   effectType,
@@ -29,25 +31,50 @@ export default function BlockMirror({
 
     // make the block size the correct size to fit screen height
     const blockSize = Math.ceil(window.innerHeight / blocksAcross);
-    let blockCanvas = null;
+    let blockCanvas1 = null;
+    let blockCanvas2 = null;
+    let blockCanvas3 = null;
+    let blockCanvas4 = null;
 
-    const palleteSize = 16;
+    const palleteSize = 20;
     const blockData = getBlockData(squareCanvas, imgRes, palleteSize);
-    blockCanvas = createBrightnessKeyCanvas({
+    blockCanvas1 = createBrightnessKeyCanvas({
       blockData,
       blockSize,
-      canvasShape,
       palleteSize,
+      pixelColour: pixelColour1,
+      ...rest,
+    });
+    blockCanvas2 = createBrightnessKeyCanvas({
+      blockData,
+      blockSize,
+      palleteSize,
+      pixelColour: pixelColour2,
+      ...rest,
+    });
+    blockCanvas3 = createBrightnessKeyCanvas({
+      blockData,
+      blockSize,
+      palleteSize,
+      pixelColour: pixelColour3,
+      ...rest,
+    });
+    blockCanvas4 = createBrightnessKeyCanvas({
+      blockData,
+      blockSize,
+      palleteSize,
+      pixelColour: pixelColour4,
       ...rest,
     });
 
-    if (!blockCanvas) return null;
+    if (!blockCanvas1) return null;
 
     const canvas = canvasRef.current;
-    canvas.width = blockCanvas.width;
-    canvas.height = blockCanvas.height;
+    canvas.width = blockCanvas1.width * 2;
+    canvas.height = blockCanvas1.height * 2;
     const ctx = canvas.getContext("2d");
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     if (canvasShape === "circle") {
       const circleRadius = canvas.width / 2;
       const canvasMiddle = { x: circleRadius, y: circleRadius };
@@ -73,7 +100,10 @@ export default function BlockMirror({
       ctx.restore();
     }
 
-    ctx.drawImage(blockCanvas, 0, 0);
+    ctx.drawImage(blockCanvas1, 0, 0);
+    ctx.drawImage(blockCanvas2, blockCanvas1.width, 0);
+    ctx.drawImage(blockCanvas3, 0, blockCanvas1.height);
+    ctx.drawImage(blockCanvas4, blockCanvas1.width, blockCanvas1.height);
   });
 
   return (

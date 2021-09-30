@@ -124,7 +124,7 @@ export const createBrightnessKeyCanvas = ({
   outputCanvas.height = outHeight;
   const ctx = outputCanvas.getContext("2d");
 
-  ctx.fillStyle = pixelColour;
+  // ctx.fillStyle = pixelColour1;
 
   const { h, s } = hexToHsl(pixelColour);
 

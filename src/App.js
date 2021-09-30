@@ -22,9 +22,9 @@ export default function App() {
   });
 
   const toggleControls = (e) => {
-    if (e.target.id === "app" || e.target.id === "canvas") {
-      setShowControls((prev) => !prev);
-    }
+    // if (e.target.id === "app" || e.target.id === "canvas") {
+    //   setShowControls((prev) => !prev);
+    // }
   };
 
   const onParamsChange = (newParams) => {
