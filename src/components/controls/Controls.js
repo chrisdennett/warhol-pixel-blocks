@@ -17,7 +17,6 @@ export default function Controls({ showControls, onChange }) {
     showImage: BooleanParam,
     imageTransparency: NumberParam,
     showPixels: BooleanParam,
-    useOriginalColour: BooleanParam,
     pixelColour: StringParam,
     bgColour: StringParam,
     showGrid: BooleanParam,
@@ -98,14 +97,9 @@ export default function Controls({ showControls, onChange }) {
       },
     }),
     Colour: folder({
-      useOriginalColour: {
-        value: false,
-        onChange: (value) => setQuery({ useOriginalColour: value }),
-      },
       pixelColour: {
         value: "#6d5972",
         onChange: (value) => setQuery({ pixelColour: value }),
-        render: (get) => get("Colour.useOriginalColour") === false,
       },
       bgColour: {
         value: "#ddccde",
@@ -126,10 +120,9 @@ export default function Controls({ showControls, onChange }) {
         render: (get) => get("Grid.showGrid") === true,
       },
       gridColour: {
-        value: "#ddccde",
+        value: "#000000",
         onChange: (value) => setQuery({ gridColour: value }),
-        render: (get) =>
-          get("Grid.showGrid") === true && get("Grid.usePixelColour") === false,
+        render: (get) => get("Grid.showGrid") === true,
       },
     }),
   }));

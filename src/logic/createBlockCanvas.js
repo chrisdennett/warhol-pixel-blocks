@@ -101,92 +101,17 @@ export const getBlockData = (inputCanvas, pixelsPerBlock = 10, palleteSize) => {
   return blockData;
 };
 
-export const createBrightnessSizeBlockCanvas = ({
-  blockData,
-  blockSize = 10,
-  showPixels,
-  pixelShape,
-  pixelColour,
-  useOriginalColour,
-  lineThickness,
-  showGrid = true,
-  gridType = "square",
-  gridThickness = 1,
-  gridColour = "black",
-  usePixelColour = false,
-  // canvasShape,
-}) => {
-  const cols = blockData[0].length; // use first row
-  const rows = blockData.length;
-
-  const outWidth = cols * blockSize;
-  const outHeight = rows * blockSize;
-
-  const outputCanvas = document.createElement("canvas");
-  outputCanvas.width = outWidth;
-  outputCanvas.height = outHeight;
-  const ctx = outputCanvas.getContext("2d");
-
-  ctx.fillStyle = pixelColour;
-
-  ctx.lineWidth = gridThickness * blockSize;
-  ctx.lineCap = "round";
-
-  for (let x = 0; x < cols; x++) {
-    for (let y = 0; y < rows; y++) {
-      const row = blockData[y];
-      const blockCorner = { x: x * blockSize, y: y * blockSize };
-      const { brightness, r, g, b } = row[x];
-
-      const brightnessAbove = y === 0 ? 0 : blockData[y - 1][x].brightness;
-      const brightnessLeft = x === 0 ? 0 : row[x - 1].brightness;
-      const isLastRow = y === rows - 1;
-      const isLastCol = x === cols - 1;
-
-      ctx.strokeStyle = usePixelColour ? `rgb(${r}, ${g}, ${b})` : null;
-      // draw grid under
-      if (showGrid) {
-        drawGridSquare({ ctx, blockCorner, blockSize, gridType });
-      }
-
-      if (showPixels) {
-        drawBrightnessShape({
-          ctx,
-          type: pixelShape,
-          blockSize,
-          blockCorner,
-          brightness,
-          colour: useOriginalColour ? { r, g, b } : null,
-          lineThickness,
-          brightnessAbove,
-          brightnessLeft,
-          isLastRow,
-          isLastCol,
-        });
-      }
-    }
-  }
-
-  if (showGrid) {
-    drawGrid({ ctx, blockSize, gridType, cols, rows });
-  }
-
-  return outputCanvas;
-};
-
 export const createBrightnessKeyCanvas = ({
   blockData,
   blockSize = 10,
   showPixels,
   pixelColour,
-  useOriginalColour,
   lineThickness,
   showGrid = true,
   gridType = "square",
   pixelShape,
   gridThickness = 1,
   gridColour = "black",
-  usePixelColour = false,
   palleteSize,
 }) => {
   const cols = blockData[0].length;
@@ -201,10 +126,12 @@ export const createBrightnessKeyCanvas = ({
 
   ctx.fillStyle = pixelColour;
 
+  const { h, s } = hexToHsl(pixelColour);
+
   ctx.lineWidth = gridThickness * blockSize;
   ctx.lineCap = "round";
 
-  const paletteGreyStep = Math.round(255 / palleteSize);
+  const paletteGreyStep = Math.round(100 / palleteSize);
 
   for (let x = 0; x < cols; x++) {
     for (let y = 0; y < rows; y++) {
@@ -217,23 +144,10 @@ export const createBrightnessKeyCanvas = ({
       const isLastRow = y === rows - 1;
       const isLastCol = x === cols - 1;
 
-      const nearestColour = {
-        r: 255 - palleteKeyIndex * paletteGreyStep,
-        g: 255 - palleteKeyIndex * paletteGreyStep,
-        b: 255 - palleteKeyIndex * paletteGreyStep,
-      };
-
-      // if (y === 0 && x === 0) {
-      //   console.log("palleteKeyIndex: ", palleteKeyIndex);
-      //   console.log("paletteGreyStep: ", paletteGreyStep);
-      //   console.log("nearestColour: ", nearestColour);
-      // }
-
-      ctx.strokeStyle = usePixelColour ? `rgb(${r}, ${g}, ${b})` : gridColour;
-      // draw grid under
-      if (showGrid) {
-        drawGridSquare({ ctx, blockCorner, blockSize, gridType });
-      }
+      const hslColour = `hsl(
+        ${h},
+        ${s}%,
+        ${100 - palleteKeyIndex * paletteGreyStep}%)`;
 
       if (showPixels) {
         drawBrightnessShape({
@@ -242,7 +156,7 @@ export const createBrightnessKeyCanvas = ({
           blockSize,
           blockCorner,
           brightness: 1,
-          colour: useOriginalColour ? { r, g, b } : nearestColour,
+          colour: hslColour,
           lineThickness,
           brightnessAbove,
           brightnessLeft,
@@ -254,10 +168,56 @@ export const createBrightnessKeyCanvas = ({
   }
 
   if (showGrid) {
+    ctx.strokeStyle = gridColour;
     drawGrid({ ctx, blockSize, gridType, cols, rows });
   }
 
   return outputCanvas;
+};
+
+const hexToHsl = (hexColour) => {
+  // Grab the hex representation of red (chars 1-2) and convert to decimal (base 10).
+  const red = parseInt(hexColour.substr(1, 2), 16);
+  const green = parseInt(hexColour.substr(3, 2), 16);
+  const blue = parseInt(hexColour.substr(5, 2), 16);
+
+  return rgbToHsl({ red, green, blue });
+};
+
+const rgbToHsl = ({ red, green, blue }) => {
+  const r = red / 255;
+  const g = green / 255;
+  const b = blue / 255;
+
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h,
+    s,
+    l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+      default:
+        break;
+    }
+    h /= 6;
+  }
+
+  // hue is in degrees, saturation and lightness in percentages
+  return { h: Math.round(h * 360), s: s * 100, l: l * 100 };
 };
 
 const drawGrid = ({ ctx, blockSize, gridType, cols, rows }) => {
@@ -320,7 +280,7 @@ const drawBrightnessShape = ({
   const rightOffset = blockCorner.x + blockSize - offset;
 
   if (colour) {
-    ctx.fillStyle = `rgb(${colour.r}, ${colour.g}, ${colour.b})`;
+    ctx.fillStyle = colour;
     // ctx.strokeStyle = `rgb(${colour.r}, ${colour.g}, ${colour.b})`;
   }
 
@@ -457,98 +417,6 @@ const drawBrightnessShape = ({
   }
 };
 
-export const createBlockDifferenceCanvas = (
-  blockData,
-  prevBlockData,
-  blockSize = 10,
-  threshold = 0.2
-) => {
-  const cols = blockData[0].length;
-  const rows = blockData.length;
-
-  const outWidth = cols * blockSize;
-  const outHeight = rows * blockSize;
-
-  const outputCanvas = document.createElement("canvas");
-  outputCanvas.width = outWidth;
-  outputCanvas.height = outHeight;
-
-  const outputCtx = outputCanvas.getContext("2d");
-
-  let blockX, blockY;
-  outputCtx.fillStyle = "black";
-  const halfBlockSize = blockSize / 2;
-
-  for (let y = 0; y < rows; y++) {
-    const row = blockData[y];
-    const prevBlockRow = prevBlockData[y];
-    for (let x = 0; x < cols; x++) {
-      // average the pixels in the area by looping through
-
-      const blockCornerX = x * blockSize;
-      const blockCornerY = y * blockSize;
-
-      const blockBrightness = row[x];
-      const prevBlockBrightness = prevBlockRow[x];
-      const diff = Math.abs(blockBrightness - prevBlockBrightness);
-
-      if (diff >= threshold) {
-        // block width deterimined by brightness
-        const brightnessSize = blockSize * blockBrightness;
-        const offset = (blockSize - brightnessSize) / 2;
-
-        // TODO this Block pos only works for vertical cetner alignment
-        blockX = offset + blockCornerX;
-        blockY = offset + blockCornerY;
-
-        outputCtx.fillStyle = "black";
-
-        outputCtx.beginPath();
-
-        outputCtx.arc(
-          blockX + halfBlockSize,
-          blockY + halfBlockSize,
-          brightnessSize / 2,
-          0,
-          Math.PI * 2
-        );
-        outputCtx.fill();
-
-        outputCtx.closePath();
-      } else {
-        const redDotSize = 1;
-        const offset = (blockSize - redDotSize) / 2;
-
-        blockX = offset + blockCornerX;
-        blockY = offset + blockCornerY;
-
-        // outputCtx.fillStyle = "red";
-        outputCtx.beginPath();
-
-        outputCtx.arc(blockX, blockY, redDotSize, 0, Math.PI * 2);
-        outputCtx.fill();
-
-        outputCtx.closePath();
-      }
-    }
-  }
-
-  return outputCanvas;
-};
-
-// bizare finding - flipping x and y like this rotates the image
-// ctx.fillRect(blockCorner.y, middle.x, 3, brightnessSize);
-
-// use if don't want to clip blocks this is handy
-// const checkIfPointIsInCircle = (a, b, x, y, r) => {
-//   var dist_points = (a - x) * (a - x) + (b - y) * (b - y);
-//   r *= r;
-//   if (dist_points < r) {
-//     return true;
-//   }
-//   return false;
-// };
-
 export const getSquareCanvas = (inputCanvas) => {
   const outCanvas = document.createElement("canvas");
   const { width: inW, height: inH } = inputCanvas;
@@ -575,3 +443,16 @@ export const getSquareCanvas = (inputCanvas) => {
 
   return outCanvas;
 };
+
+// bizare finding - flipping x and y like this rotates the image
+// ctx.fillRect(blockCorner.y, middle.x, 3, brightnessSize);
+
+// use if don't want to clip blocks this is handy
+// const checkIfPointIsInCircle = (a, b, x, y, r) => {
+//   var dist_points = (a - x) * (a - x) + (b - y) * (b - y);
+//   r *= r;
+//   if (dist_points < r) {
+//     return true;
+//   }
+//   return false;
+// };
