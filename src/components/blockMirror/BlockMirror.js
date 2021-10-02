@@ -30,6 +30,7 @@ export default function BlockMirror({
   cropRight,
   cropTop,
   cropBottom,
+  palleteSize,
   ...rest
 }) {
   const canvasRef = useRef(null);
@@ -54,7 +55,7 @@ export default function BlockMirror({
     let blockCanvas3 = null;
     let blockCanvas4 = null;
 
-    const palleteSize = 20;
+    // const palleteSize = 20;
     const blockData = getBlockData(croppedCanvas, imgRes, palleteSize);
     blockCanvas1 = createBrightnessKeyCanvas({
       blockData,
@@ -101,10 +102,19 @@ export default function BlockMirror({
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (canvasShape === "circle") {
-      const circleRadius = canvas.width / 2;
-      const canvasMiddle = { x: circleRadius, y: circleRadius };
+      const circleRadiusX = canvas.width / 2;
+      const circleRadiusY = canvas.height / 2;
+      const canvasMiddle = { x: circleRadiusX, y: circleRadiusY };
       ctx.beginPath();
-      ctx.arc(canvasMiddle.x, canvasMiddle.y, circleRadius, 0, Math.PI * 2);
+      ctx.ellipse(
+        canvasMiddle.x,
+        canvasMiddle.y,
+        circleRadiusX,
+        circleRadiusY,
+        0,
+        Math.PI * 2,
+        0
+      );
       ctx.clip();
     }
 

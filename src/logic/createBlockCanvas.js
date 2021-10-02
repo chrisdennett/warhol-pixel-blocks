@@ -71,6 +71,7 @@ export const getBlockData = (inputCanvas, pixelsPerBlock = 10, palleteSize) => {
   for (let i = 0; i < palleteSize; i++) {
     palleteKeyIndexValues.push(i * quantSize);
   }
+
   const cols = Math.round(inputW / pixelsPerBlock);
   const rows = Math.round(inputH / pixelsPerBlock);
 
@@ -144,19 +145,19 @@ export const createBrightnessKeyCanvas = ({
     for (let y = 0; y < rows; y++) {
       const row = blockData[y];
       const blockCorner = { x: x * blockSize, y: y * blockSize };
-      const { palleteKeyIndex, r, g, b, a } = row[x];
+      const { palleteKeyIndex, a } = row[x];
 
       if (a < 1) continue;
+
+      const hslColour = `hsl(
+          ${h},
+          ${s}%,
+          ${100 - palleteKeyIndex * paletteGreyStep}%)`;
 
       const brightnessAbove = y === 0 ? 0 : blockData[y - 1][x].brightness;
       const brightnessLeft = x === 0 ? 0 : row[x - 1].brightness;
       const isLastRow = y === rows - 1;
       const isLastCol = x === cols - 1;
-
-      const hslColour = `hsl(
-        ${h},
-        ${s}%,
-        ${100 - palleteKeyIndex * paletteGreyStep}%)`;
 
       if (showPixels) {
         drawBrightnessShape({

@@ -5,11 +5,7 @@ const DEFAULT_CROP_VALUES = {
   bottomPercent: 1,
 };
 
-export const createCroppedCanvas = (
-  sourceCanvas,
-  cropData,
-  backgroundColour = "red"
-) => {
+export const createCroppedCanvas = (sourceCanvas, cropData) => {
   // if there's no cropping just return the sourceCanvas unchanged
   if (!cropData || cropData === DEFAULT_CROP_VALUES) {
     return sourceCanvas;
@@ -32,7 +28,6 @@ export const createCroppedCanvas = (
 
   const ctx = outputCanvas.getContext("2d");
 
-  ctx.fillStyle = backgroundColour;
   ctx.clearRect(0, 0, croppedWidth, croppedHeight);
 
   ctx.drawImage(

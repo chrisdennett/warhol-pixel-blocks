@@ -17,6 +17,7 @@ export default function Controls({ showControls, onChange }) {
     showImage: BooleanParam,
     imageTransparency: NumberParam,
     showPixels: BooleanParam,
+    palleteSize: NumberParam,
     usePixelColourForBg: BooleanParam,
     pixelColour1: StringParam,
     pixelColour2: StringParam,
@@ -47,7 +48,8 @@ export default function Controls({ showControls, onChange }) {
           options: ["video", "webcam", "img"],
         },
         image: {
-          image: "./Dorothy-Wordsworth-transparent-bg.png",
+          // image: "./dorothy-exploded-NO-BG.png",
+          image: "./dorothy-exploded-with-bg.png",
           render: (get) => get("Input.inputType") === "img",
         },
         canvasShape: {
@@ -152,6 +154,14 @@ export default function Controls({ showControls, onChange }) {
     ),
 
     Colours: folder({
+      palleteSize: {
+        value: 2,
+        min: 1,
+        step: 1,
+        max: 50,
+        onChange: (value) => setQuery({ palleteSize: value }),
+      },
+
       usePixelColourForBg: {
         value: true,
         onChange: (value) => setQuery({ usePixelColourForBg: value }),
@@ -159,11 +169,11 @@ export default function Controls({ showControls, onChange }) {
 
       TopLeft: folder({
         pixelColour1: {
-          value: "#ff6000",
+          value: "#3a7c1b",
           onChange: (value) => setQuery({ pixelColour1: value }),
         },
         bg1: {
-          value: "#ff6000",
+          value: "#ffffff",
           onChange: (value) => setQuery({ bg1: value }),
           render: (get) => get("Colours.usePixelColourForBg") === false,
         },
@@ -175,7 +185,7 @@ export default function Controls({ showControls, onChange }) {
           onChange: (value) => setQuery({ pixelColour2: value }),
         },
         bg2: {
-          value: "#b11e1e",
+          value: "#ffffff",
           onChange: (value) => setQuery({ bg2: value }),
           render: (get) => get("Colours.usePixelColourForBg") === false,
         },
@@ -187,7 +197,7 @@ export default function Controls({ showControls, onChange }) {
           onChange: (value) => setQuery({ pixelColour3: value }),
         },
         bg3: {
-          value: "#a80fce",
+          value: "#ffffff",
           onChange: (value) => setQuery({ bg3: value }),
           render: (get) => get("Colours.usePixelColourForBg") === false,
         },
@@ -199,7 +209,7 @@ export default function Controls({ showControls, onChange }) {
           onChange: (value) => setQuery({ pixelColour4: value }),
         },
         bg4: {
-          value: "#0f6bb7",
+          value: "#ffffff",
           onChange: (value) => setQuery({ bg4: value }),
           render: (get) => get("Colours.usePixelColourForBg") === false,
         },
